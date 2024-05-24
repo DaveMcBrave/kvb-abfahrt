@@ -3,7 +3,7 @@ Description=KVB Abfahrtsmonitor Display Service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python /opt/kvb-abfahrt/kvb-abfahrt.py
+ExecStart=/usr/bin/python /opt/kvb-abfahrt/kvb-abfahrt.py --url "https://www.vrs.de/am/s/XXX" --line "XX"
 WorkingDirectory=/opt/kvb-abfahrt
 StandardOutput=journal
 StandardError=journal
