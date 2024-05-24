@@ -1,0 +1,15 @@
+[Unit]
+Description=KVB Abfahrtsmonitor Display Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python /opt/kvb-abfahrt/kvb-abfahrt.py
+WorkingDirectory=/opt/kvb-abfahrt
+StandardOutput=journal
+StandardError=journal
+Restart=always
+User=dhitze
+Group=dhitze
+
+[Install]
+WantedBy=multi-user.target
