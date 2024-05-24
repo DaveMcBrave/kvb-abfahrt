@@ -21,6 +21,8 @@ from PIL import Image, ImageDraw, ImageFont
 # Set up command-line arguments
 parser = argparse.ArgumentParser(description="KVB Departure Display Script")
 parser.add_argument('--log', action='store_true', help="Enable logging output")
+parser.add_argument('--url', type=str, required=True, help="URL for fetching departure data")
+parser.add_argument('--line', type=str, required=True, help="Line number to display departures for")
 args = parser.parse_args()
 
 # Configure logging
@@ -48,11 +50,10 @@ def extract_actual_time(departure_time):
         actual_time = departure_time
     return actual_time.strip()
 
-def fetch_departures():
+def fetch_departures(url, line_number):
     try:
         # Initialize WebDriver
         driver = webdriver.Chrome(service=service, options=options)
-        url = 'https://www.vrs.de/am/s/0e7c23ccc3387904e928c8a853965e55'
         driver.get(url)
         time.sleep(5)  # Adjust wait time based on page load speed
 
@@ -70,7 +71,7 @@ def fetch_departures():
 
             departure_time = extract_actual_time(departure_time)
 
-            if '18' in line:
+            if line_number in line:
                 departure = {
                     'departure_time': departure_time,
                     'minutes_to_departure': minutes_to_departure,
@@ -109,7 +110,7 @@ def main():
     disp.clear()
     font = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
 
-    departures = fetch_departures()
+    departures = fetch_departures(args.url, args.line)
     departure_index = 0
 
     while True:
@@ -119,7 +120,7 @@ def main():
             time.sleep(5)  # Display each entry for 5 seconds
 
         if departure_index == 0:
-            departures = fetch_departures()
+            departures = fetch_departures(args.url, args.line)
             if not departures:
                 logging.info("No departures found or error occurred.")
                 time.sleep(60)  # Wait before trying again
